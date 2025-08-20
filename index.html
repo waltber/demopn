@@ -3,22 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <title>Home Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      background: #f4f6f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #1e293b;
+      color: #fff;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    footer {
+      background: #1e293b;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    footer a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>Welcome to Our Website</h1>
   </header>
-
   <main>
     <p>
-      This is a sample homepage.  
-
+      This is a sample homepage.
     </p>
   </main>
-
   <footer>
     <p>
-    
       <a href="https://privacy-central.securiti.ai/#/notices/d600b244-ceda-430b-a2b8-0b6b8face015" target="_blank">
         Privacy Notice (external)
       </a>
