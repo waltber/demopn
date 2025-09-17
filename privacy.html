@@ -14,7 +14,6 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      overflow-y: auto;
     }
     header {
       background: #b91c1c;
@@ -25,10 +24,10 @@
     }
     header h1 { font-size: 1.5rem; font-weight: 700; color: purple !important; }
     iframe {
-      border: none;
+      border: 0;
       width: 100%;
       display: block;
-      height: 800px;
+      height: 1px; /* será ajustado via postMessage */
     }
     footer {
       background: #b91c1c;
@@ -60,25 +59,34 @@
     (function () {
       const iframe = document.getElementById('privacy-iframe');
       const expectedNoticeId = iframe?.dataset?.noticeId;
-      const allowedOrigins = ['https://privacy-central.securiti.ai'];
-      let rafId = null;
-      let nextHeight = null;
-      function applyHeight(h) {
-        const heightNumber = Math.max(0, Number(h) || 0);
-        iframe.style.height = heightNumber + 'px';
+
+      function isAllowedOrigin(origin) {
+        try {
+          const host = new URL(origin).hostname;
+          return host === 'privacy-central.securiti.ai' || /\.securiti\.ai$/.test(host);
+        } catch { return false; }
       }
+
+      let rafId = null, nextHeight = null;
+      function applyHeight(h) {
+        const n = Math.max(0, parseInt(h, 10) || 0);
+        iframe.style.height = (n + 0) + 'px';
+      }
+
       window.addEventListener('message', function (event) {
-        if (!allowedOrigins.includes(event.origin)) return;
-        const data = event?.data;
-        if (!data || data.type !== 'IFRAME_CONTENT_SIZE') return;
-        const payload = data.payload || {};
-        if (expectedNoticeId && String(payload.id) !== String(expectedNoticeId)) return;
-        nextHeight = payload.height;
+        if (!isAllowedOrigin(event.origin)) return;
+        const d = event?.data;
+        if (!d) return;
+
+        const type = d.type || d.event || d.messageType;
+        if (type !== 'IFRAME_CONTENT_SIZE' && type !== 'IFRAME_HEIGHT' && type !== 'NOTICE_IFRAME_HEIGHT') return;
+
+        const payload = d.payload || d.data || {};
+        if (expectedNoticeId && String(payload.id || payload.notice_id || '') !== String(expectedNoticeId)) return;
+
+        nextHeight = payload.height || payload.content_height || payload.size || 0;
         if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          applyHeight(nextHeight);
-          rafId = null;
-        });
+        rafId = requestAnimationFrame(() => { applyHeight(nextHeight); rafId = null; });
       });
     })();
   </script>
